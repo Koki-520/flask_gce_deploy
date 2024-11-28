@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>フォーム送信API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+        input[type=file] {
+            display: block;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>フォーム送信API</h2>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">送信</button>
+        </form>
+        <div class="result" id="result" style="display:none;">
+            <h3>処理結果</h3>
+            <pre id="result-content"></pre>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('result-content');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            fetch('/submit_forms', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.style.display = 'block';
+                resultContent.textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                resultDiv.style.display = 'block';
+                resultContent.textContent = 'エラーが発生しました: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>
